@@ -56,14 +56,14 @@ jobs:
           ncu-config set repo "$(echo "$GITHUB_REPOSITORY" | cut -d/ -f2)"
           ncu-config set owner "${GITHUB_REPOSITORY_OWNER}"
         env:
-          GH_TOKEN: ${{ secrets.TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
 
       - name: Set up ghauth config (Ubuntu)
         run: |
           mkdir -p "${XDG_CONFIG_HOME:-~/.config}/changelog-maker"
           jq --null-input '{user: env.GITHUB_ACTOR, token: env.TOKEN}' > "${XDG_CONFIG_HOME:-~/.config}/changelog-maker/config.json"
         env:
-          TOKEN: ${{secrets.TOKEN }}
+          TOKEN: ${{secrets.GH_TOKEN }}
 
       - name: Setup git author
         run: |
@@ -76,6 +76,6 @@ jobs:
           curl -fsSL https://github.com/${GITHUB_REPOSITORY}/raw/${GITHUB_SHA}/tools/actions/create-release-proposal.sh |\
           sh -s -- "${RELEASE_DATE}" "${RELEASE_LINE}" "${GITHUB_ACTOR}"
         env:
-          GH_TOKEN: ${{  secrets.TOKEN}}
+          GH_TOKEN: ${{  secrets.GH_TOKEN}}
           # We want the bot to push the push the release commit so CI runs on it.
-          BOT_TOKEN: ${{  secrets.TOKEN}}
+          BOT_TOKEN: ${{  secrets.GH_TOKEN}}
