@@ -78,4 +78,4 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           # We want the bot to push the push the release commit so CI runs on it.
-          BOT_TOKEN: ${{ secrets.GH_USER_TOKEN }}
+          BOT_TOKEN: ${{ github.token }}
