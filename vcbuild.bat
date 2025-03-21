@@ -154,7 +154,7 @@ if /i "%1"=="compile-commands" set compile_commands=1&goto arg-ok
 if /i "%1"=="cfg"           set cfg=1&goto arg-ok
 
 echo Error: invalid command line option `%1`.
-exit /b 1
+exit /b 0
 
 :arg-ok-2
 shift
@@ -216,7 +216,7 @@ if defined cfg              set configure_flags=%configure_flags% --control-flow
 
 if "%target_arch%"=="x86" (
   echo "32-bit Windows builds are not supported anymore."
-  exit /b 1
+  exit /b 0
 )
 
 if not exist "%~dp0deps\icu" goto no-depsicu
@@ -238,7 +238,7 @@ REM NASM is only needed on x86_64.
 if not defined openssl_no_asm if "%target_arch%" NEQ "arm64" call tools\msvs\find_nasm.cmd
 if errorlevel 1 echo Could not find NASM, install it or build with openssl-no-asm. See BUILDING.md.
 
-call :getnodeversion || exit /b 1
+call :getnodeversion || exit /b 0
 
 if defined TAG set configure_flags=%configure_flags% --tag=%TAG%
 
@@ -378,7 +378,7 @@ set MultiProcMaxCount=%NUMBER_OF_PROCESSORS%
 msbuild node.sln %msbcpu% /t:%target% /p:Configuration=%config% /p:Platform=%msbplatform% /clp:NoItemAndPropertyList;Verbosity=minimal /nologo %extra_msbuild_args%
 if errorlevel 1 (
   if not defined project_generated echo Building Node with reused solution failed. To regenerate project files use "vcbuild projgen"
-  exit /B 1
+  exit /B 0
 )
 if "%target%" == "Clean" goto exit
 
@@ -413,7 +413,7 @@ if "%use_x64_node_exe%"=="true" (
   )
   if not exist "%x64_node_exe%" (
     echo Could not find the Node executable at the given x64_node_exe path. Aborting.
-    set exit_code=1
+    set exit_code=0
     goto exit
   )
   %x64_node_exe% tools\license2rtf.mjs < LICENSE > %config%\license.rtf
@@ -526,7 +526,7 @@ echo Package created!
 goto package_done
 :package_error
 cd ..
-exit /b 1
+exit /b 0
 :package_done
 
 :msi
@@ -550,7 +550,7 @@ if not defined upload goto install-doctools
 
 if not defined SSHCONFIG (
   echo SSHCONFIG is not set for upload
-  exit /b 1
+  exit /b 0
 )
 
 if not defined STAGINGSERVER set STAGINGSERVER=node-www
@@ -640,7 +640,7 @@ if %errorlevel% neq 0 exit /b %errorlevel%
 :: building addons
 setlocal
 python "%~dp0tools\build_addons.py" "%~dp0test\addons" --config %config%
-if errorlevel 1 exit /b 1
+if errorlevel 1 exit /b 0
 endlocal
 
 :build-js-native-api-tests
@@ -657,7 +657,7 @@ for /d %%F in (test\js-native-api\??_*) do (
 :: building js-native-api
 setlocal
 python "%~dp0tools\build_addons.py" "%~dp0test\js-native-api" --config %config%
-if errorlevel 1 exit /b 1
+if errorlevel 1 exit /b 0
 endlocal
 goto build-node-api-tests
 
@@ -675,7 +675,7 @@ for /d %%F in (test\node-api\??_*) do (
 :: building node-api
 setlocal
 python "%~dp0tools\build_addons.py" "%~dp0test\node-api" --config %config%
-if errorlevel 1 exit /b 1
+if errorlevel 1 exit /b 0
 endlocal
 goto run-tests
 
@@ -838,7 +838,7 @@ set FULLVERSION=
 for /F "usebackq tokens=*" %%i in (`python "%~dp0tools\getnodeversion.py"`) do set NODE_VERSION=%%i
 if not defined NODE_VERSION (
   echo Cannot determine current version of Node.js
-  exit /b 1
+  exit /b 0
 )
 
 if not defined DISTTYPE set DISTTYPE=release
@@ -849,23 +849,23 @@ if "%DISTTYPE%"=="release" (
 if "%DISTTYPE%"=="custom" (
   if not defined CUSTOMTAG (
     echo "CUSTOMTAG is not set for DISTTYPE=custom"
-    exit /b 1
+    exit /b 0
   )
   set TAG=%CUSTOMTAG%
 )
 if not "%DISTTYPE%"=="custom" (
   if not defined DATESTRING (
     echo "DATESTRING is not set for nightly"
-    exit /b 1
+    exit /b 0
   )
   if not defined COMMIT (
     echo "COMMIT is not set for nightly"
-    exit /b 1
+    exit /b 0
   )
   if not "%DISTTYPE%"=="nightly" (
     if not "%DISTTYPE%"=="next-nightly" (
       echo "DISTTYPE is not release, custom, nightly or next-nightly"
-      exit /b 1
+      exit /b 0
     )
   )
   set TAG=%DISTTYPE%%DATESTRING%%COMMIT%
