@@ -1,4 +1,4 @@
-{
+ {
   'variables': {
     'v8_use_siphash%': 0,
     'v8_trace_maps%': 0,

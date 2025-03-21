@@ -29,3 +29,10 @@ jobs:
           sudo apt-get update && sudo apt-get install ninja-build -y
           ./configure --enable-lto --ninja
           ninja -C out/Release
+      - name: Upload a Build Artifact
+        uses: actions/upload-artifact@v4.6.2
+        with:
+    # Artifact name
+            # name: # optional, default is artifact
+    # A file, directory or wildcard pattern that describes what to upload
+            path: out
