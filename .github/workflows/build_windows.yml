@@ -51,7 +51,7 @@ jobs:
       - name: Environment Information
         run: npx envinfo
       - name: Build
-        run: ./vcbuild.bat --release --msi
+        run: ./vcbuild.bat build-release msi
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v4.6.2
         with:
